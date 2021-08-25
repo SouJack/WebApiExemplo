@@ -1,12 +1,9 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Refit;
-using Vibe.Exemplo.WebApi.Servicos;
 
 namespace Vibe.Exemplo.WebApi
 {
@@ -23,16 +20,12 @@ namespace Vibe.Exemplo.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddControllers()
-                    .AddNewtonsoftJson();
+            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Vibe.Exemplo.WebApi", Version = "v1" });
                 c.EnableAnnotations();
             });
-
-            services.AddRefitClient<IConsultaCepServico>()
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://viacep.com.br"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
