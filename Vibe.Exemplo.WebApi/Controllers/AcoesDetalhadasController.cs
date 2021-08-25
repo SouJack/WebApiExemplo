@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Annotations;
-
+using Vibe.Transporte.Core.Modelos;
 
 namespace Vibe.Exemplo.WebApi.Controllers
 {
@@ -40,13 +40,16 @@ namespace Vibe.Exemplo.WebApi.Controllers
         [SwaggerOperation(Summary = "Apaga um valor", Description = "Apaga um valor de acordo com Id passado.")]
         [SwaggerResponse(200, "Valor foi excluido")]
         [SwaggerResponse(404, "Valor não existe")]
-        [SwaggerResponse(400, "Id do Valor não é válido", typeof(string))]
+        [SwaggerResponse(400, "Id do Valor não é válido", typeof(ErroResposta))]
         public IActionResult Delete(int id)
         {
             switch (id)
             {
                 case <= 0:
-                    return BadRequest("Valor de Id inválid.");
+                    var resposta = new ErroResposta();
+                    resposta.Mensagem = "Valor de Id inválid.";
+                    resposta.CodigoErro = "400";
+                    return BadRequest(resposta);
                 case > 2:
                     return NotFound("Valor não existe");
                 default:

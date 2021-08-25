@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vibe.Exemplo.WebApi", "Vibe.Exemplo.WebApi\Vibe.Exemplo.WebApi.csproj", "{8C3447CD-DA54-4A86-A3D6-280B83EB44B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vibe.Exemplo.WebApi", "Vibe.Exemplo.WebApi\Vibe.Exemplo.WebApi.csproj", "{8C3447CD-DA54-4A86-A3D6-280B83EB44B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vibe.Transporte.Core", "Vibe.Transporte.Core\Vibe.Transporte.Core.csproj", "{F0A58ED7-E4D5-46D3-94C5-309BE27D3223}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vibe.Transporte.Core", "Vibe.Transporte.Core\Vibe.Transporte.Core.csproj", "{F0A58ED7-E4D5-46D3-94C5-309BE27D3223}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
