@@ -1,10 +1,12 @@
 using System;
+using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Polly;
 using Refit;
 using Vibe.Exemplo.WebApi.Servicos;
 
@@ -31,8 +33,18 @@ namespace Vibe.Exemplo.WebApi
                 c.EnableAnnotations();
             });
 
+            var politicaRetentativas = Policy.HandleResult<HttpResponseMessage>(r => !r.IsSuccessStatusCode)
+                                             .RetryAsync(2, onRetry: (res, tentativas) =>
+                                                        {
+                                                            Console.Out.WriteLine($"# Request: {res.Result.RequestMessage}");
+                                                            Console.Out.WriteLine($"# Content: {res.Result.Content.ReadAsStringAsync().Result}");
+                                                            Console.Out.WriteLine($"# ReasonPhrase: {res.Result.ReasonPhrase}");
+                                                            Console.Out.WriteLine($"# Retentativa: {tentativas}");
+                                                        });
+
             services.AddRefitClient<IConsultaCepServico>()
-                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://viacep.com.br"));
+                    .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://viacep.com.br"))
+                    .AddPolicyHandler(politicaRetentativas);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
