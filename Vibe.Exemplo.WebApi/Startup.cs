@@ -8,7 +8,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Polly;
 using Refit;
+using Vibe.Exemplo.WebApi.Modelos;
 using Vibe.Exemplo.WebApi.Servicos;
+using Vibe.Exemplo.WebApi.Validadores;
 
 namespace Vibe.Exemplo.WebApi
 {
@@ -45,6 +47,8 @@ namespace Vibe.Exemplo.WebApi
             services.AddRefitClient<IConsultaCepServico>()
                     .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://viacep.com.br"))
                     .AddPolicyHandler(politicaRetentativas);
+
+            services.AddSingleton<IValidador<Contato>, ContatoValidador>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

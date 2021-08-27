@@ -36,7 +36,16 @@ namespace Vibe.Exemplo.WebApi.Controllers
         {
             await using (SqlConnection conexao = new SqlConnection(Configuracao.GetConnectionString("Conexao")))
             {
-                var achou = await conexao.QuerySingleAsync<bool>("spAjustaEndereco", new { cpf, endereco.Cep, endereco.Logradouro, endereco.Bairro }, commandType: CommandType.StoredProcedure);
+                //var p = new {cpf, endereco.Cep, endereco.Logradouro, endereco.Bairro};
+                var p = new DynamicParameters();
+                p.Add("@cpf",cpf);
+                p.Add("@cep", endereco.Cep);
+                p.Add("@logradouro", endereco.Logradouro);
+                p.Add("@bairro", endereco.Bairro);
+                p.Add("@r", direction: ParameterDirection.Output, dbType: DbType.Boolean);
+                //var achou = await conexao.QuerySingleAsync<bool>("spAjustaEndereco", p, commandType: CommandType.StoredProcedure);
+                await conexao.ExecuteAsync("spAjustaEndereco", p, commandType: CommandType.StoredProcedure);
+                var achou = p.Get<bool>("r");
                 if (!achou)
                     return NotFound(new ErroResposta {Mensagem = $"Não existe contato para o CPF: {cpf}."});
                 return Ok();

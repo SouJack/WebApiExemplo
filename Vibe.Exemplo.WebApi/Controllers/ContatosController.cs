@@ -15,10 +15,12 @@ namespace Vibe.Exemplo.WebApi.Controllers
     [ApiController]
     public class ContatosController : ControllerBase
     {
-        public IConfiguration Configuracao { get; }
-        public ContatosController(IConfiguration configuracao)
+        protected IConfiguration Configuracao { get; }
+        protected IValidador<Contato> Validador { get; }
+        public ContatosController(IConfiguration configuracao, IValidador<Contato> validador)
         {
             Configuracao = configuracao;
+            Validador = validador;
         }
 
         [HttpGet]
@@ -46,13 +48,13 @@ namespace Vibe.Exemplo.WebApi.Controllers
         [ProducesResponseType(typeof(ErroComDetalhesResposta), 400)]
         public IActionResult Post([FromBody] Contato contato)
         {
-            var validador = new ContatoValidador();
-            var validacao = validador.Validate(contato);
-            if (!validacao.IsValid)
+            //var validador = new ContatoValidador();
+            var validacao = Validador.Validar(contato);
+            if (!validacao.Validado)
             {
                 var resposta = new ErroComDetalhesResposta("400", "Contato inválido, veja os detalhes.")
                 {
-                        DetalhesAdicionais = validacao.Errors.Select(e => new ErroResposta(e.ErrorMessage, e.ErrorCode)).ToList()
+                        DetalhesAdicionais = validacao.Erros
                 };
                 return BadRequest(resposta);
             }
