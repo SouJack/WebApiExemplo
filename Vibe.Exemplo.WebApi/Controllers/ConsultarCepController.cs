@@ -11,7 +11,7 @@ namespace Vibe.Exemplo.WebApi.Controllers
     [ApiController]
     public class ConsultarCepController : ControllerBase
     {
-        public IConsultaCepServico ConsultaCepServico { get; }
+        protected IConsultaCepServico ConsultaCepServico { get; }
         public ConsultarCepController(IConsultaCepServico consultaCepServico)
         {
             ConsultaCepServico = consultaCepServico;
