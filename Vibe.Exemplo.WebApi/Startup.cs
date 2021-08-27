@@ -2,11 +2,13 @@ using System;
 using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Polly;
+using Polly.Caching.Memory;
 using Refit;
 using Vibe.Exemplo.WebApi.Servicos;
 
@@ -45,6 +47,14 @@ namespace Vibe.Exemplo.WebApi
             services.AddRefitClient<IConsultaCepServico>()
                     .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://viacep.com.br"))
                     .AddPolicyHandler(politicaRetentativas);
+
+            services.AddSingleton(s =>
+            {
+                var memoryCache = new MemoryCache(new MemoryCacheOptions());
+                var memoryCacheProvider = new MemoryCacheProvider(memoryCache);
+                var cachePolicy = Policy.Cache(memoryCacheProvider, TimeSpan.FromMinutes(5));
+                return cachePolicy;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using Polly;
+using Polly.Caching;
 using Vibe.Exemplo.WebApi.Modelos;
 using Vibe.Exemplo.WebApi.Servicos;
 using Vibe.Transporte.Core.Modelos;
@@ -11,10 +12,12 @@ namespace Vibe.Exemplo.WebApi.Controllers
     [ApiController]
     public class ConsultarCepController : ControllerBase
     {
-        public IConsultaCepServico ConsultaCepServico { get; }
-        public ConsultarCepController(IConsultaCepServico consultaCepServico)
+        protected IConsultaCepServico ConsultaCepServico { get; }
+        protected CachePolicy CachePolicy { get; }
+        public ConsultarCepController(IConsultaCepServico consultaCepServico, CachePolicy cachePolicy)
         {
             ConsultaCepServico = consultaCepServico;
+            CachePolicy = cachePolicy;
         }
 
         [HttpGet("{cep}")]
@@ -23,7 +26,7 @@ namespace Vibe.Exemplo.WebApi.Controllers
         [Produces("application/json", "application/xml")]
         public async Task<IActionResult> Consultar(string cep)
         {
-            var r = await ConsultaCepServico.Consultar(cep);
+            var r = await CachePolicy.Execute(async c => await ConsultaCepServico.Consultar(cep), new Context(cep));
             return Ok(r);
         }
     }
