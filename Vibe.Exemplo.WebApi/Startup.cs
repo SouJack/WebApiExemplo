@@ -4,11 +4,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Polly;
 using Refit;
+using SoapCore;
 using Vibe.Exemplo.WebApi.Servicos;
+using Vibe.Exemplo.WebApi.Soaps;
 
 namespace Vibe.Exemplo.WebApi
 {
@@ -45,6 +48,10 @@ namespace Vibe.Exemplo.WebApi
             services.AddRefitClient<IConsultaCepServico>()
                     .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://viacep.com.br"))
                     .AddPolicyHandler(politicaRetentativas);
+
+            services.AddSoapCore();
+            services.TryAddSingleton<wsScrcXMLPortType, ScrcXMLPortType>();
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,6 +73,7 @@ namespace Vibe.Exemplo.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.UseSoapEndpoint<wsScrcXMLPortType>("/Scrc.asmx", new SoapEncoderOptions(), SoapSerializer.XmlSerializer);
             });
         }
     }
