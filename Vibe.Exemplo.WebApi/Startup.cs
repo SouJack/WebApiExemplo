@@ -10,7 +10,9 @@ using Microsoft.OpenApi.Models;
 using Polly;
 using Polly.Caching.Memory;
 using Refit;
+using Vibe.Exemplo.WebApi.Processos;
 using Vibe.Exemplo.WebApi.Servicos;
+using Vibe.Transporte.Core;
 
 namespace Vibe.Exemplo.WebApi
 {
@@ -47,6 +49,12 @@ namespace Vibe.Exemplo.WebApi
             services.AddRefitClient<IConsultaCepServico>()
                     .ConfigureHttpClient(c => c.BaseAddress = new Uri("https://viacep.com.br"))
                     .AddPolicyHandler(politicaRetentativas);
+
+            services.AddSingleton<IServicoExemplo, ServicoExemplo>()
+                    .AddSingleton<IExemploOrquestrador, ExemploOrquestrador>();
+            services//.AddHostedService<SegundoPlanoExemplo>()
+                    .AddHostedService<SegundoPlanoExemplo2>();  
+            services.AddMemoryCache();
 
             services.AddSingleton(s =>
             {
